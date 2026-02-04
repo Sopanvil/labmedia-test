@@ -6,7 +6,6 @@ import axios, {
   type CancelTokenSource,
 } from 'axios';
 
-// Расширяем конфиг, чтобы явно указывать URL и метод
 export interface UseApiRequestConfig extends Omit<AxiosRequestConfig, 'url' | 'method'> {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -20,7 +19,6 @@ export interface UseApiState<T = unknown> {
 }
 
 export function useApi<T = unknown>() {
-  // Состояние запроса
   const state = reactive<UseApiState<T>>({
     data: null,
     error: null,
@@ -28,22 +26,18 @@ export function useApi<T = unknown>() {
     success: false,
   });
 
-  // Источник отмены (для предотвращения утечек при быстрой смене состояний)
   let cancelSource: CancelTokenSource | null = null;
 
   /**
    * Выполнение запроса
    */
   const execute = async (config: UseApiRequestConfig): Promise<AxiosResponse<T> | null> => {
-    // Отмена предыдущего запроса
     if (cancelSource) {
       cancelSource.cancel('Request superseded by a new one.');
     }
 
-    // Создаём новый токен отмены
     cancelSource = axios.CancelToken.source();
 
-    // Сброс состояния
     state.data = null;
     state.error = null;
     state.loading = true;
@@ -81,7 +75,6 @@ export function useApi<T = unknown>() {
     state.success = false;
   };
 
-  // Возвращаем только readonly-версию состояния (защита от мутаций извне)
   return {
     ...readonly(state),
     execute,

@@ -1,9 +1,7 @@
-<!-- src/views/LoginForm.vue -->
 <script setup lang="ts">
 import { useApi } from '@/composables/useApi';
 import { useForm, useField } from 'vee-validate';
 
-// 1. Форма vee-validate
 const { handleSubmit, isSubmitting } = useForm({
   initialValues: {
     email: '',
@@ -11,7 +9,6 @@ const { handleSubmit, isSubmitting } = useForm({
   },
 });
 
-// 2. Поля и правила
 const {
   value: email,
   errorMessage: emailError,
@@ -28,10 +25,8 @@ const {
   return value.length >= 6 ? true : 'Минимум 6 символов';
 });
 
-// 3. Настройка API
 const api = useApi<{ token: string }>();
 
-// 4. Обработчик отправки
 const onSubmit = handleSubmit(async (values) => {
   await api.execute({
     url: '/auth/login',
@@ -54,7 +49,6 @@ const onSubmit = handleSubmit(async (values) => {
     <p class="login-form__subtitle">Используйте рабочую почту для входа</p>
 
     <form @submit.prevent="onSubmit" class="login-form__form">
-      <!-- Email -->
       <div class="form-group">
         <label class="field-label" for="email">Email</label>
         <input
@@ -70,7 +64,6 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
       </div>
 
-      <!-- Password -->
       <div class="form-group">
         <label class="field-label" for="password">Пароль</label>
         <input
@@ -86,7 +79,6 @@ const onSubmit = handleSubmit(async (values) => {
         </p>
       </div>
 
-      <!-- Submit button -->
       <button
         type="submit"
         :disabled="api.loading || isSubmitting"
@@ -95,7 +87,6 @@ const onSubmit = handleSubmit(async (values) => {
         {{ api.loading || isSubmitting ? 'Входим...' : 'Войти' }}
       </button>
 
-      <!-- Ошибка API -->
       <p v-if="api.error" class="login-form__api-error">
         {{ (api.error.response?.data as any)?.message || 'Произошла ошибка. Попробуйте позже.' }}
       </p>
